@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo del Lenguaje - 6.° Grado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cosmic-bg: #1a0b36;
+            --neon-pink: #ff2a74;
+            --neon-cyan: #00f0ff;
+            --neon-purple: #9d4edd;
+            --game-card: rgba(255, 255, 255, 0.08);
+            --gold: #ffbd00;
+            --mint: #00f5d4;
+            --coral: #ff5400;
+            --text-light: #f7f4f3;
+            --radius-lg: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #240b47 0%, #100526 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px 10px;
+            overflow-x: hidden;
+        }
+
+        .container { width: 100%; max-width: 1050px; margin: 0 auto; }
+
+        /* PORTALES (BIENVENIDA Y FINAL) */
+        .portal-card {
+            background: rgba(36, 11, 71, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--neon-cyan);
+            border-radius: var(--radius-lg);
+            padding: 40px 25px;
+            text-align: center;
+            max-width: 650px;
+            margin: 45px auto;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+        }
+
+        .portal-card h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-shadow: 0 4px 0px #c61a09, 0 8px 20px rgba(0,0,0,0.4);
+            margin-bottom: 15px;
+        }
+
+        /* CONTENEDOR DE ENLACES DE VIDEO */
+        .video-resource-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--neon-pink);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .video-grid { grid-template-columns: 1fr; }
+        }
+
+        .video-card-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .video-card-link:hover {
+            transform: translateY(-2px);
+            border-color: var(--neon-cyan);
+        }
+
+        .video-link-btn {
+            display: inline-block;
+            background: #ff0000;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .video-link-btn:hover { background: #cc0000; }
+
+        .copyright-box {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            color: #aaaad0;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .avatar-selection { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .avatar-node { font-size: 2.5rem; background: var(--game-card); border: 2px solid transparent; padding: 10px; border-radius: 50%; cursor: pointer; transition: all 0.2s; }
+        .avatar-node.selected { border-color: var(--neon-pink); background: rgba(255, 42, 116, 0.2); transform: scale(1.15); }
+
+        /* CABECERA INTERNA Y NAV */
+        header { text-align: center; margin-bottom: 25px; background: var(--game-card); backdrop-filter: blur(10px); padding: 20px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.1); }
+        header h2 { font-family: 'Fredoka One', cursive; font-size: 2.2rem; background: linear-gradient(45deg, var(--neon-cyan), var(--mint)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .game-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 25px; }
+        .game-nav-btn { font-family: 'Quicksand', sans-serif; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 12px 5px; font-size: 0.95rem; font-weight: 700; color: #b0a8c2; cursor: pointer; border-radius: 14px; transition: all 0.2s; text-align: center; }
+        .game-nav-btn small { display: block; color: var(--neon-cyan); font-size: 0.75rem; }
+        .game-nav-btn.active-zone { background: linear-gradient(135deg, rgba(157,78,221,0.3), rgba(0,240,255,0.2)); border-color: var(--neon-cyan); color: white; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
+
+        .dashboard-score-board { display: flex; justify-content: space-between; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); padding: 15px 25px; border-radius: var(--radius-lg); margin-bottom: 25px; font-weight: 700; }
+        .metric-container span { color: var(--gold); font-size: 1.2rem; }
+
+        /* ESCENARIOS DE JUEGO */
+        .game-stage-card { background: var(--game-card); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.1); padding: 30px; min-height: 480px; display: none; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .game-stage-card.active-zone { display: block; }
+        .stage-title-block h3 { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: white; margin-bottom: 4px; }
+        .stage-title-block p { color: #ccc2df; font-size: 0.95rem; margin-bottom: 20px; }
+
+        /* INTERACTIVOS POR RETO */
+        .tf-interactive-card { background: rgba(0,0,0,0.2); padding: 35px 20px; border-radius: var(--radius-lg); text-align: center; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .tf-sentence-display { font-size: 1.45rem; font-weight: 700; color: #fff; margin-bottom: 15px; }
+        .tf-prompt-display { color: var(--neon-cyan); font-size: 1.1rem; }
+        .tf-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .btn-cyber-choice { font-family: 'Fredoka One', cursive; padding: 15px; font-size: 1.2rem; border: none; border-radius: 12px; cursor: pointer; color: white; }
+        .btn-cyber-choice.choice-true { background: linear-gradient(135deg, #00f5d4, #00bbf9); }
+        .btn-cyber-choice.choice-false { background: linear-gradient(135deg, #ff0054, #9e0059); }
+
+        /* ESTILOS DE LA SOPA DE LETRAS AMPLIADA */
+        .soup-game-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; }
+        @media (max-width: 850px) {
+            .soup-game-layout { grid-template-columns: 1fr; }
+        }
+        .soup-container-wrapper { background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; }
+        .soup-neon-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; width: 100%; max-width: 440px; margin: 0 auto; user-select: none; }
+        .soup-cell { aspect-ratio: 1; background: #11052c; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.05rem; font-family: 'Fredoka One', cursive; text-transform: uppercase; cursor: pointer; border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s; }
+        .soup-cell:hover { background: rgba(0, 240, 255, 0.15); border-color: var(--neon-cyan); }
+        .soup-cell.selected-start { background: var(--neon-purple) !important; color: white !important; box-shadow: 0 0 10px var(--neon-purple); }
+        .soup-cell.found-word { background: linear-gradient(135deg, #00f5d4, #00bbf9) !important; color: #100526 !important; font-weight: bold; border-color: var(--mint); }
+        
+        .soup-clues-terminal { background: rgba(0,0,0,0.3); padding: 20px; border-radius: var(--radius-lg); border-left: 4px solid var(--neon-pink); }
+        .soup-word-item { padding: 8px 12px; margin: 8px 0; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.2s; }
+        .soup-word-item.word-cleared { text-decoration: line-through; color: #6366f1; background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.3); }
+
+        .drag-pool-bank { background: rgba(0,0,0,0.2); padding: 15px; border-radius: var(--radius-lg); border: 2px dashed var(--neon-cyan); display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap; }
+        .token-draggable { background: linear-gradient(135deg, var(--neon-purple), #6366f1); color: white; padding: 10px 20px; font-weight: 700; border-radius: 8px; cursor: grab; user-select: none; }
+        .paragraph-drop-zone { background: rgba(255,255,255,0.02); padding: 25px; border-radius: var(--radius-lg); font-size: 1.3rem; line-height: 2.4; text-align: center; }
+        .landing-drop-box { display: inline-block; width: 45px; height: 35px; background: rgba(0,0,0,0.4); border: 2px dashed rgba(255,255,255,0.3); border-radius: 6px; text-align: center; vertical-align: middle; line-height: 31px; color: var(--gold); font-weight: bold; margin: 0 4px; }
+
+        .cyber-canvas-frame { width: 100%; max-width: 480px; height: 230px; background: #0c041f; border-radius: var(--radius-lg); margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; }
+        .input-cyber-group { display: flex; gap: 10px; max-width: 500px; margin: 0 auto; }
+        .input-cyber-text { flex-grow: 1; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; color: white; font-size: 1rem; outline: none; }
+        .btn-cyber-util { background: var(--neon-purple); border: none; padding: 0 15px; border-radius: 8px; color: white; cursor: pointer; font-weight: 700; }
+
+        .pair-game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .pair-block { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; font-weight: 700; transition: all 0.2s; min-height: 55px; display: flex; align-items: center; justify-content: center; }
+        .pair-block.focus-left { border-color: var(--neon-cyan); background: rgba(0,240,255,0.15); }
+        .pair-block.focus-right { border-color: var(--neon-pink); background: rgba(255,42,116,0.15); }
+        .pair-block.permanent-lock { border-color: var(--mint) !important; color: var(--mint) !important; background: rgba(0,245,212,0.1) !important; cursor: not-allowed; }
+
+        .control-shelf { display: flex; justify-content: flex-end; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .btn-action-cyber { font-family: 'Fredoka One', cursive; padding: 10px 24px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; background: var(--gold); color: #100526; }
+
+        .game-banner-alert { padding: 14px; border-radius: 8px; margin-top: 20px; text-align: center; display: none; font-weight: 700; }
+        .game-banner-alert.win { background: rgba(0,245,212,0.15); border: 1px solid var(--mint); color: var(--mint); }
+        .game-banner-alert.lose { background: rgba(255,0,84,0.15); border: 1px solid var(--neon-pink); color: var(--neon-pink); }
+
+        /* PORTAL FINAL */
+        .stat-badge { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; margin: 10px 0; font-size: 1.2rem; }
+        .stat-badge span { color: var(--neon-cyan); font-weight: bold; font-size: 1.4rem; }
+
+        footer { text-align: center; margin-top: 35px; color: #7f7495; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="welcomePortal" class="portal-card">
+            <h1>🚀 ¡Mundo del Lenguaje!</h1>
+            <p>¡Hola! Antes de iniciar la misión espacial, repasa los temas clave con estos videos interactivos:</p>
+            
+            <div class="video-resource-panel">
+                <p style="font-size: 0.95rem; color: var(--neon-cyan); font-weight: bold;">📺 Estación de Repaso Audiovisual</p>
+                <div class="video-grid">
+                    <div class="video-card-link">
+                        <p style="font-size: 0.85rem; color: #ccc;">Sujeto y Predicado</p>
+                        <a href="https://youtu.be/p30YTOTU23M" target="_blank" class="video-link-btn">Ver Video 1 🔗</a>
+                    </div>
+                    <div class="video-card-link">
+                        <p style="font-size: 0.85rem; color: #ccc;">Elementos de Comunicación</p>
+                        <a href="https://youtu.be/vSd85wovq3I" target="_blank" class="video-link-btn">Ver Video 2 🔗</a>
+                    </div>
+                </div>
+
+                <div class="copyright-box">
+                    <p><strong>ℹ️ Derechos de Autor y Créditos Multimedia:</strong></p>
+                    <p>• Video 1: "El sujeto y el predicado | Videos Educativos para Niños" © Aula365 – Los Creadores.</p>
+                    <p>• Video 2: "Los elementos de la comunicación" © Smile and Learn - Español.</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 15px;">Ingresa tu nombre de explorador/a:</p>
+            <input type="text" id="txtPlayerName" class="input-cyber-text" placeholder="Tu nombre aquí..." style="text-align: center; font-size: 1.2rem; margin: 15px 0;">
+            
+            <p>Elige tu Avatar:</p>
+            <div class="avatar-selection">
+                <span class="avatar-node selected" onclick="selectAvatar(this)">👽</span>
+                <span class="avatar-node" onclick="selectAvatar(this)">🤖</span>
+                <span class="avatar-node" onclick="selectAvatar(this)">🦊</span>
+                <span class="avatar-node" onclick="selectAvatar(this)">🦄</span>
+            </div>
+            
+            <button class="btn-action-cyber" onclick="startGameEngine()" style="font-size: 1.3rem; padding: 12px 40px; width: 100%;">¡INICIAR MISIÓN!</button>
+        </div>
+
+        <div id="gameEnvironment" style="display: none;">
+            <header>
+                <h2>Mundo del Lenguaje Avanzado</h2>
+                <p style="font-size: 0.95rem; color: #a197b9;">¡Bienvenido/a al espacio, <span id="spanPlayer" style="color: var(--gold); font-weight:bold;">Jugador</span>!</p>
+            </header>
+
+            <nav class="game-nav">
+                <button class="game-nav-btn active-zone" id="nav-actividad1" onclick="switchZone('actividad1')">Nivel 1<small>Sintaxis</small></button>
+                <button class="game-nav-btn" id="nav-actividad2" onclick="switchZone('actividad2')">Nivel 2<small>Sopa de Letras</small></button>
+                <button class="game-nav-btn" id="nav-actividad3" onclick="switchZone('actividad3')">Nivel 3<small>Grafías</small></button>
+                <button class="game-nav-btn" id="nav-actividad4" onclick="switchZone('actividad4')">Nivel 4<small>Comunicación</small></button>
+                <button class="game-nav-btn" id="nav-actividad5" onclick="switchZone('actividad5')">Nivel 5<small>Pareo</small></button>
+            </nav>
+
+            <div class="dashboard-score-board">
+                <div class="metric-container">Módulo Actual: <span id="lblDisplayZone">Nivel 1</span></div>
+                <div class="metric-container">Puntos: <span id="lblTotalScore">0</span> EXP</div>
+                <div class="metric-container">Aciertos Totales: <span id="lblTotalHits">0</span></div>
+            </div>
+
+            <section id="actividad1" class="game-stage-card active-zone">
+                <div class="stage-title-block">
+                    <h3>⚡ Laboratorio Sintáctico Automático (Sujeto y Predicado)</h3>
+                    <p>Pregunta <span id="n1Index" style="color:var(--neon-cyan);">1</span> de 5: Responde correctamente para avanzar.</p>
+                </div>
+                <div class="tf-interactive-card">
+                    <div id="tfSentenceSlot" class="tf-sentence-display">-</div>
+                    <div id="tfPromptSlot" class="tf-prompt-display">-</div>
+                </div>
+                <div class="tf-btn-grid">
+                    <button class="btn-cyber-choice choice-true" onclick="processTrueFalseChoice(true)">Verdadero</button>
+                    <button class="btn-cyber-choice choice-false" onclick="processTrueFalseChoice(false)">Falso</button>
+                </div>
+            </section>
+
+            <section id="actividad2" class="game-stage-card">
+                <div class="stage-title-block">
+                    <h3>🧩 Sopa de Letras Gramatical Cósmica (12 x 12)</h3>
+                    <p>Encuentra las palabras ocultas. Haz clic en la <b>Letra de Inicio</b> y luego en la <b>Letra Final</b> de la palabra.</p>
+                </div>
+                <div class="soup-game-layout">
+                    <div class="soup-container-wrapper">
+                        <div id="soupGridTarget" class="soup-neon-grid"></div>
+                    </div>
+                    <div class="soup-clues-terminal">
+                        <h4 style="color:var(--neon-cyan); margin-bottom: 10px;">📋 Lista de Definiciones</h4>
+                        <div id="soupCluesContainer"></div>
+                    </div>
+                </div>
+                <div class="control-shelf">
+                    <button class="btn-action-cyber" onclick="verifySoupLevelProgress()">Validar Nivel 2</button>
+                </div>
+            </section>
+
+            <section id="actividad3" class="game-stage-card">
+                <div class="stage-title-block">
+                    <h3>🎯 Selector Contextual de Grafías (Uso de B y V)</h3>
+                    <p>Oración <span id="n3Index" style="color:var(--neon-cyan);">1</span> de 5: Haz clic en la letra correcta abajo para colocarla en el espacio.</p>
+                </div>
+                <div id="dragTokenPool" class="drag-pool-bank"></div>
+                <div id="paragraphZone" class="paragraph-drop-zone"></div>
+                <div class="control-shelf">
+                    <button class="btn-action-cyber" onclick="evaluateDragAndDrop()">Verificar Oración</button>
+                </div>
+            </section>
+
+            <section id="actividad4" class="game-stage-card">
+                <div class="stage-title-block">
+                    <h3>👁️ Descifrador de Mensajes Cósmicos</h3>
+                    <p>Reto <span id="n4Index" style="color:var(--neon-cyan);">1</span> de 5: Descubre el elemento de la comunicación oculto.</p>
+                </div>
+                <div class="cyber-canvas-frame" id="guessSvgTarget"></div>
+                <div class="input-cyber-group">
+                    <input type="text" id="txtCyberGuess" class="input-cyber-text" placeholder="Escribe tu respuesta aquí...">
+                    <button class="btn-cyber-util" onclick="showGuessClue()">Pista</button>
+                </div>
+                <div id="guessClueAlert" class="game-banner-alert win" style="margin-top:10px; font-size:0.9rem;"></div>
+                <div class="control-shelf">
+                    <button class="btn-action-cyber" onclick="verifyGuessInput()">Comprobar Elemento</button>
+                </div>
+            </section>
+
+            <section id="actividad5" class="game-stage-card">
+                <div class="stage-title-block">
+                    <h3>⚡ Pareo Literario de Vinculación Completa</h3>
+                    <p>Asocia cada uno de los 5 conceptos de la izquierda con su definición correspondiente haciendo clic.</p>
+                </div>
+                <div class="pair-game-grid">
+                    <div class="pair-column" id="pairLeftCol"></div>
+                    <div class="pair-column" id="pairRightCol"></div>
+                </div>
+                <div class="control-shelf">
+                    <button class="btn-action-cyber" onclick="evaluatePairingSystem()">Evaluar Bloque de Pareo</button>
+                </div>
+            </section>
+
+            <div id="globalGameBanner" class="game-banner-alert"></div>
+
+            <footer>
+                <p>Mundo del Lenguaje • Universidad de Panamá • Entorno de Desarrollo Escolar</p>
+            </footer>
+        </div>
+
+        <div id="finalPortal" class="portal-card" style="display: none; border-color: var(--mint);">
+            <h1 id="finalStatusTitle">¡Misión Completada! 🏆</h1>
+            <p id="finalStatusMessage" style="font-size: 1.1rem; margin-bottom: 20px;">¡Felicidades explorador!</p>
+            
+            <div class="stat-badge">
+                Experiencia Acumulada: <span id="finalScoreDisplay">0</span> EXP
+            </div>
+            <div class="stat-badge">
+                Aciertos Totales: <span id="finalHitsDisplay">0</span> preguntas
+            </div>
+
+            <p id="finalFeedbackParagraph" style="margin: 20px 0; font-weight: bold; color: var(--gold);"></p>
+
+            <button class="btn-action-cyber" onclick="restartWholeGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%; margin-top: 10px;">🎮 VOLVER A JUGAR</button>
+        </div>
+
+    </div>
+
+    <script>
+        let stateScore = 0;
+        let stateHits = 0;
+        let chosenAvatar = "👽";
+
+        // BANCO DE DATOS NIVEL 1
+        const DB_NIVEL1 = [
+            { s: "« Los estudiantes de sexto grado declamaron con mucha pasión ayer. »", p: "¿El núcleo del sujeto es 'estudiantes'?", a: true },
+            { s: "« La computadora del laboratorio espacial tiene un virus grave. »", p: "¿El sujeto de la oración es 'un virus grave'?", a: false },
+            { s: "« Nosotros caminamos hacia el telescopio gigante de la colina. »", p: "¿El núcleo del predicado es 'nosotros'?", a: false },
+            { s: "« El viejo mapa estelar muestra la ruta correcta. »", p: "¿El adjetivo 'viejo' funciona como modificador directo?", a: true },
+            { s: "« Ana y Luis aprobaron el examen de admisión con honores. »", p: "¿Esta oración posee un sujeto compuesto?", a: true }
+        ];
+        let idxN1 = 0;
+
+        // BANCO DE DATOS NIVEL 2 (SOPA DE LETRAS)
+        const SOUP_SIZE = 12;
+        const DB_SOPA = [
+            { word: "VERBO", hint: "La palabra de acción primordial en la oración, núcleo del predicado.", cleared: false, cells: [] },
+            { word: "SUJETO", hint: "La persona, animal o entidad cósmica de quien se habla en la oración.", cleared: false, cells: [] },
+            { word: "PREDICADO", hint: "Todo aquello que se dice, detalla o predica sobre el sujeto.", cleared: false, cells: [] },
+            { word: "EMISOR", hint: "Elemento de la comunicación encargado de codificar y enviar el mensaje original.", cleared: false, cells: [] },
+            { word: "RECEPTOR", hint: "Aquel agente encargado de recibir, decodificar e interpretar el mensaje recibido.", cleared: false, cells: [] }
+        ];
+        
+        let SOUP_MATRIX = [
+            ['P','R','E','D','I','C','A','D','O','X','Z','W'],
+            ['X','V','O','T','E','J','U','S','O','N','M','R'],
+            ['A','B','E','X','M','P','Q','W','E','R','T','E'],
+            ['S','D','R','R','X','M','L','K','J','H','G','C'],
+            ['F','G','H','B','B','O','A','S','D','F','G','E'],
+            ['Z','X','C','V','O','R','X','M','N','B','V','P'],
+            ['R','O','S','I','M','E','X','T','Y','U','I','T'],
+            ['Q','W','E','R','T','Y','U','I','O','P','A','O'],
+            ['A','S','D','F','G','H','J','K','L','Ñ','Z','R'],
+            ['X','Y','Z','W','A','B','C','D','E','F','G','H'],
+            ['M','N','O','P','Q','R','S','T','U','V','W','X'],
+            ['A','B','C','D','E','F','G','H','I','J','K','L']
+        ];
+
+        DB_SOPA[0].cells = ["1,1", "2,2", "3,3", "4,4", "5,5"]; 
+        DB_SOPA[1].cells = ["1,7", "1,6", "1,5", "1,4", "1,3", "1,2"]; 
+        DB_SOPA[2].cells = ["0,0", "0,1", "0,2", "0,3", "0,4", "0,5", "0,6", "0,7", "0,8"]; 
+        DB_SOPA[3].cells = ["6,5", "6,4", "6,3", "6,2", "6,1", "6,0"]; 
+        DB_SOPA[4].cells = ["1,11", "2,11", "3,11", "4,11", "5,11", "6,11", "7,11", "8,11"]; 
+
+        let selectedStartCell = null;
+
+        // BANCO DE DATOS NIVEL 3
+        const DB_NIVEL3 = [
+            { text_left: "El ca", text_right: "allo corría veloz por el campo.", correct: "B" },
+            { text_left: "Todos de", text_right: "en cuidar los recursos del planeta.", correct: "V" },
+            { text_left: "La es", text_right: "elta estructura resistió el viento.", correct: "B" },
+            { text_left: "El científico de", text_right: "ía estudiar las muestras del suelo.", correct: "B" },
+            { text_left: "Aquel invento era muy nue", text_right: "o para la época.", correct: "V" }
+        ];
+        let idxN3 = 0;
+        let currentSelectedDraggable = null;
+
+        // BANCO DE DATOS NIVEL 4
+        const DB_NIVEL4 = [
+            { element: "mensaje", clue: "Es la información o pensamiento que viaja de un lado a otro.", highlight: "center" },
+            { element: "emisor", clue: "Es quien crea y envía el mensaje al inicio.", highlight: "left" },
+            { element: "receptor", clue: "Es la persona que recibe e interpreta la información.", highlight: "right" },
+            { element: "canal", clue: "Es el medio físico por donde viaja el mensaje.", highlight: "line" },
+            { element: "código", clue: "Es el sistema de signos o idioma usado.", highlight: "box" }
+        ];
+        let idxN4 = 0;
+
+        // BANCO DE DATOS NIVEL 5
+        const DB_NIVEL5 = [
+            { id: "LIR", name: "Género Lírico", desc: "Expresa el mundo interno, sentimientos y emociones en versos." },
+            { id: "NAR", name: "Género Narrativo", desc: "Relata hechos reales o imaginarios mediante un narrador en prosa." },
+            { id: "DRA", name: "Género Dramático", desc: "Representa conflictos humanos mediante el diálogo para ser actuados." },
+            { id: "MET", name: "Metáfora", desc: "Figura que identifica un término real con uno imaginario por semejanza." },
+            { id: "PER", name: "Personificación", desc: "Atribuir cualidades o acciones humanas a objetos o animales." }
+        ];
+        let trackingLeftSelectedId = null;
+        let trackingRightSelectedId = null;
+        let livePairingMap = {};
+
+        function selectAvatar(element) {
+            document.querySelectorAll('.avatar-node').forEach(n => n.classList.remove('selected'));
+            element.classList.add('selected');
+            chosenAvatar = element.innerText;
+        }
+
+        function startGameEngine() {
+            const nameInput = document.getElementById('txtPlayerName').value.trim();
+            const player = nameInput !== "" ? nameInput : "Astronauta";
+            document.getElementById('spanPlayer').innerText = chosenAvatar + " " + player;
+            document.getElementById('welcomePortal').style.display = 'none';
+            document.getElementById('gameEnvironment').style.display = 'block';
+            
+            loadNivel1Question();
+            buildSopaDeLetras();
+            buildDragAndDropLevel();
+            loadNivel4Svg();
+            buildPairingLevel();
+        }
+
+        function switchZone(targetId) {
+            document.querySelectorAll(".game-stage-card").forEach(c => c.classList.remove("active-zone"));
+            document.querySelectorAll(".game-nav-btn").forEach(b => b.classList.remove("active-zone"));
+            
+            document.getElementById(targetId).classList.add("active-zone");
+            document.getElementById("nav-" + targetId).classList.add("active-zone");
+            
+            const labels = {"actividad1":"Nivel 1","actividad2":"Nivel 2","actividad3":"Nivel 3","actividad4":"Nivel 4","actividad5":"Nivel 5"};
+            document.getElementById("lblDisplayZone").innerText = labels[targetId];
+            dismissBannerAlert();
+        }
+
+        function triggerBannerAlert(txt, mode) {
+            const b = document.getElementById("globalGameBanner");
+            b.innerText = txt; b.className = `game-banner-alert ${mode}`; b.style.display = "block";
+        }
+        function dismissBannerAlert() { document.getElementById("globalGameBanner").style.display = "none"; }
+        
+        function updateScoreUi() {
+            document.getElementById("lblTotalScore").innerText = stateScore;
+            document.getElementById("lblTotalHits").innerText = stateHits;
+        }
+
+        // --- LÓGICA NIVEL 1 ---
+        function loadNivel1Question() {
+            document.getElementById("n1Index").innerText = (idxN1 + 1);
+            document.getElementById("tfSentenceSlot").innerText = DB_NIVEL1[idxN1].s;
+            document.getElementById("tfPromptSlot").innerText = DB_NIVEL1[idxN1].p;
+        }
+
+        function processTrueFalseChoice(choice) {
+            if (choice === DB_NIVEL1[idxN1].a) {
+                stateScore += 15; stateHits++;
+                triggerBannerAlert("¡Correcto! Análisis estructural exacto. +15 EXP", "win");
+                updateScoreUi();
+                setTimeout(() => {
+                    idxN1++;
+                    if(idxN1 < DB_NIVEL1.length) {
+                        loadNivel1Question();
+                        dismissBannerAlert();
+                    } else {
+                        triggerBannerAlert("¡Nivel 1 superado! Accediendo a la Sopa de Letras...", "win");
+                        setTimeout(() => { switchZone('actividad2'); }, 1500);
+                    }
+                }, 1200);
+            } else {
+                triggerBannerAlert("❌ Respuesta incorrecta. ¡Analiza bien la oración e inténtalo de nuevo!", "lose");
+            }
+        }
+
+        // --- LÓGICA NIVEL 2 (SOPA DE LETRAS) ---
+        function buildSopaDeLetras() {
+            const grid = document.getElementById("soupGridTarget");
+            const cluesContainer = document.getElementById("soupCluesContainer");
+            grid.innerHTML = "";
+            cluesContainer.innerHTML = "";
+
+            for (let r = 0; r < SOUP_SIZE; r++) {
+                for (let c = 0; c < SOUP_SIZE; c++) {
+                    const cell = document.createElement("div");
+                    cell.className = "soup-cell";
+                    cell.innerText = SOUP_MATRIX[r][c];
+                    cell.id = `sc-${r}-${c}`;
+                    cell.onclick = () => handleSoupCellClick(r, c);
+                    grid.appendChild(cell);
+                }
+            }
+
+            DB_SOPA.forEach((item, index) => {
+                const d = document.createElement("div");
+                d.className = "soup-word-item";
+                d.id = `soup-clue-${index}`;
+                d.innerHTML = `<b>Pista:</b> ${item.hint}`;
+                cluesContainer.appendChild(d);
+            });
+        }
+
+        function handleSoupCellClick(r, c) {
+            const clickedId = `${r},${c}`;
+            const cellDom = document.getElementById(`sc-${r}-${c}`);
+
+            if (!selectedStartCell) {
+                selectedStartCell = clickedId;
+                cellDom.classList.add("selected-start");
+            } else {
+                const startCoords = selectedStartCell.split(",");
+                const sr = parseInt(startCoords[0]);
+                const sc = parseInt(startCoords[1]);
+                
+                document.getElementById(`sc-${sr}-${sc}`).classList.remove("selected-start");
+                
+                let pathCells = getCellPath(sr, sc, r, c);
+                let wordFound = false;
+
+                DB_SOPA.forEach((item, idx) => {
+                    if (!item.cleared && isMatchingPath(pathCells, item.cells)) {
+                        item.cleared = true;
+                        wordFound = true;
+                        stateScore += 20; stateHits++;
+                        updateScoreUi();
+                        
+                        item.cells.forEach(coord => {
+                            const [cr, cc] = coord.split(",");
+                            document.getElementById(`sc-${cr}-${cc}`).classList.add("found-word");
+                        });
+                        document.getElementById(`soup-clue-${idx}`).classList.add("word-cleared");
+                        triggerBannerAlert(`¡Encontraste la palabra oculta! +20 EXP`, "win");
+                    }
+                });
+
+                if (!wordFound) {
+                    triggerBannerAlert("No se detectó ninguna palabra válida en esa selección.", "lose");
+                }
+                selectedStartCell = null;
+            }
+        }
+
+        function getCellPath(sr, sc, er, ec) {
+            let path = [];
+            let dr = er - sr;
+            let dc = ec - sc;
+            let steps = Math.max(Math.abs(dr), Math.abs(dc));
+            if (steps === 0) return [`${sr},${sc}`];
+            
+            let stepR = dr / steps;
+            let stepC = dc / steps;
+            
+            if (Number.isInteger(stepR) && Number.isInteger(stepC)) {
+                for (let i = 0; i <= steps; i++) {
+                    path.push(`${sr + (stepR * i)},${sc + (stepC * i)}`);
+                }
+            }
+            return path;
+        }
+
+        function isMatchingPath(p1, p2) {
+            if (p1.length !== p2.length) return false;
+            let direct = p1.every((val, i) => val === p2[i]);
+            let reverse = [...p1].reverse().every((val, i) => val === p2[i]);
+            return direct || reverse;
+        }
+
+        function verifySoupLevelProgress() {
+            let allDone = DB_SOPA.every(i => i.cleared);
+            if (allDone) {
+                triggerBannerAlert("¡Sopa de letras completada! Avanzando al Nivel 3...", "win");
+                setTimeout(() => { switchZone('actividad3'); }, 1500);
+            } else {
+                triggerBannerAlert("Todavía quedan palabras ocultas en la sopa cósmica.", "lose");
+            }
+        }
+
+        // --- LÓGICA NIVEL 3 (GRAFÍAS) ---
+        function buildDragAndDropLevel() {
+            document.getElementById("n3Index").innerText = (idxN3 + 1);
+            const pool = document.getElementById("dragTokenPool");
+            pool.innerHTML = "";
+            
+            ["B", "V"].forEach(letter => {
+                const t = document.createElement("div");
+                t.className = "token-draggable";
+                t.innerText = letter;
+                t.onclick = () => {
+                    document.querySelectorAll('.token-draggable').forEach(x => x.style.boxShadow = "none");
+                    t.style.boxShadow = "0 0 10px #00f0ff";
+                    currentSelectedDraggable = letter;
+                };
+                pool.appendChild(t);
+            });
+
+            const zone = document.getElementById("paragraphZone");
+            zone.innerHTML = `${DB_NIVEL3[idxN3].text_left}<div class="landing-drop-box" id="lbox3">?</div>${DB_NIVEL3[idxN3].text_right}`;
+            
+            document.getElementById("lbox3").onclick = () => {
+                if(currentSelectedDraggable) {
+                    document.getElementById("lbox3").innerText = currentSelectedDraggable;
+                }
+            };
+        }
+
+        function evaluateDragAndDrop() {
+            const userAns = document.getElementById("lbox3").innerText;
+            if (userAns === DB_NIVEL3[idxN3].correct) {
+                stateScore += 15; stateHits++;
+                updateScoreUi();
+                triggerBannerAlert("¡Grafía correcta! Ortografía estelar validada. +15 EXP", "win");
+                
+                setTimeout(() => {
+                    idxN3++;
+                    currentSelectedDraggable = null;
+                    if (idxN3 < DB_NIVEL3.length) {
+                        buildDragAndDropLevel();
+                        dismissBannerAlert();
+                    } else {
+                        triggerBannerAlert("¡Nivel 3 superado! Entrando al descifrador...", "win");
+                        setTimeout(() => { switchZone('actividad4'); }, 1500);
+                    }
+                }, 1200);
+            } else {
+                triggerBannerAlert("❌ Grafía incorrecta. Revisa las reglas de la B y la V e inténtalo de nuevo.", "lose");
+            }
+        }
+
+        // --- LÓGICA NIVEL 4 (COMUNICACIÓN) ---
+        function loadNivel4Svg() {
+            document.getElementById("n4Index").innerText = (idxN4 + 1);
+            document.getElementById("txtCyberGuess").value = "";
+            document.getElementById("guessClueAlert").style.display = "none";
+            
+            const target = document.getElementById("guessSvgTarget");
+            let mode = DB_NIVEL4[idxN4].highlight;
+            
+            let fillLeft = mode === "left" ? "#ff2a74" : "#9d4edd";
+            let fillRight = mode === "right" ? "#ff2a74" : "#9d4edd";
+            let fillCenter = mode === "center" ? "#ff2a74" : "#00f5d4";
+            let strokeLine = mode === "line" ? "#ff2a74" : "#00f0ff";
+            let strokeBox = mode === "box" ? "#ff2a74" : "#ffffff";
+            let weightLine = mode === "line" ? "5" : "2";
+
+            target.innerHTML = `
+                <svg width="400" height="200" viewBox="0 0 400 200">
+                    <circle cx="60" cy="100" r="35" fill="${fillLeft}" />
+                    <text x="60" y="105" fill="white" font-weight="bold" text-anchor="middle">E</text>
+                    <line x1="100" y1="100" x2="300" y2="100" stroke="${strokeLine}" stroke-width="${weightLine}" stroke-dasharray="5,5" />
+                    <rect x="140" y="45" width="120" height="40" rx="8" fill="${fillCenter}" />
+                    <text x="200" y="70" fill="#100526" font-weight="bold" text-anchor="middle">¿ ?</text>
+                    <circle cx="340" cy="100" r="35" fill="${fillRight}" />
+                    <text x="340" y="105" fill="white" font-weight="bold" text-anchor="middle">R</text>
+                    <rect x="130" y="145" width="140" height="30" fill="none" stroke="${strokeBox}" stroke-width="2" />
+                    <text x="200" y="165" fill="white" font-size="12" text-anchor="middle">Código / Sistema</text>
+                </svg>
+            `;
+        }
+
+        function showGuessClue() {
+            const alertBox = document.getElementById("guessClueAlert");
+            alertBox.innerText = `💡 Pista: ${DB_NIVEL4[idxN4].clue}`;
+            alertBox.style.display = "block";
+        }
+
+        function verifyGuessInput() {
+            const userText = document.getElementById("txtCyberGuess").value.trim().toLowerCase();
+            const correctAns = DB_NIVEL4[idxN4].element;
+
+            if (userText === correctAns) {
+                stateScore += 15; stateHits++;
+                updateScoreUi();
+                triggerBannerAlert("¡Elemento descifrado correctamente! +15 EXP", "win");
+
+                setTimeout(() => {
+                    idxN4++;
+                    if (idxN4 < DB_NIVEL4.length) {
+                        loadNivel4Svg();
+                        dismissBannerAlert();
+                    } else {
+                        triggerBannerAlert("¡Nivel 4 superado! Entrando al Pareo Literario Final...", "win");
+                        setTimeout(() => { switchZone('actividad5'); }, 1500);
+                    }
+                }, 1200);
+            } else {
+                triggerBannerAlert("❌ Nombre de elemento incorrecto. Mira la pista y la zona resaltada en rosa.", "lose");
+            }
+        }
+
+        // --- LÓGICA NIVEL 5 (PAREO) ---
+        function buildPairingLevel() {
+            const leftCol = document.getElementById("pairLeftCol");
+            const rightCol = document.getElementById("pairRightCol");
+            leftCol.innerHTML = "";
+            rightCol.innerHTML = "";
+
+            let leftItems = [...DB_NIVEL5];
+            let rightItems = [...DB_NIVEL5].sort(() => Math.random() - 0.5);
+
+            leftItems.forEach(item => {
+                const d = document.createElement("div");
+                d.className = "pair-block";
+                d.innerText = item.name;
+                d.dataset.uid = item.id;
+                d.id = `pair-L-${item.id}`;
+                d.onclick = () => handlePairSelect(item.id, 'left');
+                leftCol.appendChild(d);
+            });
+
+            rightItems.forEach(item => {
+                const d = document.createElement("div");
+                d.className = "pair-block";
+                d.innerText = item.desc;
+                d.dataset.uid = item.id;
+                d.id = `pair-R-${item.id}`;
+                d.onclick = () => handlePairSelect(item.id, 'right');
+                rightCol.appendChild(d);
+            });
+        }
+
+        function handlePairSelect(id, side) {
+            if (document.getElementById(`pair-${side === 'left' ? 'L' : 'R'}-${id}`).classList.contains("permanent-lock")) return;
+
+            if (side === 'left') {
+                if (trackingLeftSelectedId) {
+                    document.getElementById(`pair-L-${trackingLeftSelectedId}`).classList.remove("focus-left");
+                }
+                trackingLeftSelectedId = id;
+                document.getElementById(`pair-L-${id}`).classList.add("focus-left");
+            } else {
+                if (trackingRightSelectedId) {
+                    document.getElementById(`pair-R-${trackingRightSelectedId}`).classList.remove("focus-right");
+                }
+                trackingRightSelectedId = id;
+                document.getElementById(`pair-R-${id}`).classList.add("focus-right");
+            }
+
+            if (trackingLeftSelectedId && trackingRightSelectedId) {
+                livePairingMap[trackingLeftSelectedId] = trackingRightSelectedId;
+                
+                const lNode = document.querySelector(`#pairLeftCol .pair-block.focus-left`);
+                const rNode = document.querySelector(`#pairRightCol .pair-block.focus-right`);
+
+                lNode.style.borderStyle = "dotted";
+                rNode.style.borderStyle = "dotted";
+
+                trackingLeftSelectedId = null;
+                trackingRightSelectedId = null;
+                triggerBannerAlert("🔗 Enlace temporal registrado en el nodo de pareo.", "win");
+            }
+        }
+
+        function evaluatePairingSystem() {
+            let matchesFound = 0;
+            let totalRequired = DB_NIVEL5.length;
+
+            for (const [key, value] of Object.entries(livePairingMap)) {
+                if (key === value) {
+                    matchesFound++;
+                    const leftDom = document.querySelector(`#pairLeftCol .pair-block[data-uid="${key}"]`);
+                    const rightDom = document.querySelector(`#pairRightCol .pair-block[data-uid="${value}"]`);
+                    
+                    if (leftDom) leftDom.className = "pair-block permanent-lock";
+                    if (rightDom) rightDom.className = "pair-block permanent-lock";
+                }
+            }
+
+            if (matchesFound === totalRequired) {
+                stateScore += 35; stateHits += 5;
+                updateScoreUi();
+                triggerBannerAlert("¡Pareo perfecto! Sistema literario completamente alineado. +35 EXP", "win");
+                
+                setTimeout(() => {
+                    document.getElementById('gameEnvironment').style.display = 'none';
+                    document.getElementById('finalPortal').style.display = 'block';
+                    document.getElementById('finalScoreDisplay').innerText = stateScore;
+                    document.getElementById('finalHitsDisplay').innerText = stateHits;
+                    
+                    let feedback = "";
+                    if (stateScore >= 120) feedback = "¡Rango Máximo: Gran Almirante del Lenguaje! 🌟 Excepcional.";
+                    else if (stateScore >= 80) feedback = "¡Rango: Piloto Mayor de la Sintaxis! Muy buen trabajo.";
+                    else feedback = "Rango: Cadete Espacial. Sigue practicando las estructuras.";
+                    
+                    document.getElementById('finalFeedbackParagraph').innerText = feedback;
+                }, 1500);
+            } else {
+                triggerBannerAlert("❌ Algunas conexiones en el pareo no son correctas. Reiniciando bloque...", "lose");
+                livePairingMap = {};
+                setTimeout(() => { buildPairingLevel(); }, 1600);
+            }
+        }
+
+        function restartWholeGame() {
+            stateScore = 0;
+            stateHits = 0;
+            idxN1 = 0;
+            idxN3 = 0;
+            idxN4 = 0;
+            selectedStartCell = null;
+            currentSelectedDraggable = null;
+            trackingLeftSelectedId = null;
+            trackingRightSelectedId = null;
+            livePairingMap = {};
+            
+            DB_SOPA.forEach(i => i.cleared = false);
+            
+            updateScoreUi();
+            document.getElementById('finalPortal').style.display = 'none';
+            document.getElementById('welcomePortal').style.display = 'block';
+            document.getElementById('txtPlayerName').value = "";
+        }
+    </script>
+</body>
+</html>
